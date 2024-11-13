@@ -9,32 +9,47 @@ import {
   Calculator,
   TrendingUp,
   Wrench,
-  DollarSign
+  DollarSign,
+  LogOut,
+  Home
 } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { getAuth, signOut } from 'firebase/auth';
 
 const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-  { icon: Users, label: 'Clientes', path: '/clientes' },
-  { icon: Package, label: 'Produtos', path: '/produtos' },
-  { icon: ClipboardList, label: 'Pedidos', path: '/pedidos' },
-  { icon: Warehouse, label: 'Estoque', path: '/estoque' },
-  { icon: Calculator, label: 'Orçamentos', path: '/orcamentos' },
-  { icon: Wrench, label: 'Serviços', path: '/servicos' },
-  { icon: DollarSign, label: 'Caixa', path: '/caixa' },
-  { icon: TrendingUp, label: 'Relatórios', path: '/relatorios' },
-  { icon: Settings, label: 'Configurações', path: '/configuracoes' },
+  { icon: Home, label: 'Home', path: '/app/home' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/app/dashboard' },
+  { icon: Users, label: 'Clientes', path: '/app/clientes' },
+  { icon: Package, label: 'Produtos', path: '/app/produtos' },
+  { icon: ClipboardList, label: 'Pedidos', path: '/app/pedidos' },
+  { icon: Warehouse, label: 'Estoque', path: '/app/estoque' },
+  { icon: Calculator, label: 'Orçamentos', path: '/app/orcamentos' },
+  { icon: Wrench, label: 'Serviços', path: '/app/servicos' },
+  { icon: DollarSign, label: 'Caixa', path: '/app/caixa' },
+  { icon: TrendingUp, label: 'Relatórios', path: '/app/relatorios' },
+  { icon: Settings, label: 'Configurações', path: '/app/configuracoes' },
 ];
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const auth = getAuth();
+    try {
+      await signOut(auth);
+      navigate('/');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
+  };
 
   return (
-    <div className="bg-gray-900 text-white w-64 min-h-screen p-4">
+    <div className="bg-gray-900 text-white w-64 min-h-screen p-4 flex flex-col">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-center">MarmoTech</h1>
       </div>
-      <nav>
+      <nav className="flex-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -55,6 +70,13 @@ export default function Sidebar() {
           );
         })}
       </nav>
+      <button
+        onClick={handleLogout}
+        className="flex items-center space-x-3 p-3 rounded-lg text-red-400 hover:bg-gray-800 transition-colors mt-4"
+      >
+        <LogOut size={20} />
+        <span>Sair</span>
+      </button>
     </div>
   );
 }

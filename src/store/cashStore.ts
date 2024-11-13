@@ -1,4 +1,15 @@
 import { create } from 'zustand';
+import { 
+  collection, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  doc, 
+  getDocs,
+  query,
+  where 
+} from 'firebase/firestore';
+import { db } from '../config/firebase';
 import { CashTransaction, CashBalance, CashReport } from '../types/cash';
 
 interface CashStore {
@@ -6,12 +17,13 @@ interface CashStore {
   balance: CashBalance;
   
   // Transaction actions
-  addTransaction: (transaction: CashTransaction) => void;
-  updateTransaction: (id: string, transaction: CashTransaction) => void;
-  deleteTransaction: (id: string) => void;
+  addTransaction: (transaction: CashTransaction) => Promise<void>;
+  updateTransaction: (id: string, transaction: CashTransaction) => Promise<void>;
+  deleteTransaction: (id: string) => Promise<void>;
+  loadTransactions: () => Promise<void>;
   
   // Report generation
-  generateReport: (startDate: string, endDate: string) => CashReport;
+  generateReport: (startDate: string, endDate: string) => Promise<CashReport>;
 }
 
 export const useCashStore = create<CashStore>((set, get) => ({
@@ -21,14 +33,36 @@ export const useCashStore = create<CashStore>((set, get) => ({
     lastUpdated: new Date().toISOString()
   },
 
-  addTransaction: (transaction) => {
+  loadTransactions: async () => {
+    const querySnapshot = await getDocs(collection(db, 'transactions'));
+    const transactions = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CashTransaction));
+    
+    // Calculate balance
+    const total = transactions.reduce((sum, transaction) => 
+      sum + (transaction.type === 'income' ? transaction.amount : -transaction.amount), 
+      0
+    );
+
+    set({ 
+      transactions,
+      balance: {
+        total,
+        lastUpdated: new Date().toISOString()
+      }
+    });
+  },
+
+  addTransaction: async (transaction) => {
+    const docRef = await addDoc(collection(db, 'transactions'), transaction);
+    const newTransaction = { ...transaction, id: docRef.id };
+
     set((state) => {
       const newTotal = state.balance.total + (
         transaction.type === 'income' ? transaction.amount : -transaction.amount
       );
 
       return {
-        transactions: [...state.transactions, transaction],
+        transactions: [...state.transactions, newTransaction],
         balance: {
           total: newTotal,
           lastUpdated: new Date().toISOString()
@@ -37,17 +71,17 @@ export const useCashStore = create<CashStore>((set, get) => ({
     });
   },
 
-  updateTransaction: (id, transaction) => {
+  updateTransaction: async (id, transaction) => {
+    await updateDoc(doc(db, 'transactions', id), transaction);
+
     set((state) => {
       const oldTransaction = state.transactions.find(t => t.id === id);
       const otherTransactions = state.transactions.filter(t => t.id !== id);
       
       let balanceAdjustment = 0;
       if (oldTransaction) {
-        // Remove the effect of the old transaction
         balanceAdjustment -= (oldTransaction.type === 'income' ? 
           oldTransaction.amount : -oldTransaction.amount);
-        // Add the effect of the new transaction
         balanceAdjustment += (transaction.type === 'income' ? 
           transaction.amount : -transaction.amount);
       }
@@ -62,7 +96,9 @@ export const useCashStore = create<CashStore>((set, get) => ({
     });
   },
 
-  deleteTransaction: (id) => {
+  deleteTransaction: async (id) => {
+    await deleteDoc(doc(db, 'transactions', id));
+
     set((state) => {
       const transaction = state.transactions.find(t => t.id === id);
       if (!transaction) return state;
@@ -80,13 +116,19 @@ export const useCashStore = create<CashStore>((set, get) => ({
     });
   },
 
-  generateReport: (startDate, endDate) => {
-    const state = get();
-    const filteredTransactions = state.transactions.filter(transaction => {
-      const transactionDate = new Date(transaction.date);
-      return transactionDate >= new Date(startDate) && 
-             transactionDate <= new Date(endDate);
-    });
+  generateReport: async (startDate: string, endDate: string) => {
+    const transactionsRef = collection(db, 'transactions');
+    const q = query(
+      transactionsRef,
+      where('date', '>=', startDate),
+      where('date', '<=', endDate)
+    );
+    
+    const querySnapshot = await getDocs(q);
+    const filteredTransactions = querySnapshot.docs.map(doc => ({ 
+      id: doc.id, 
+      ...doc.data() 
+    } as CashTransaction));
 
     const report: CashReport = {
       startDate,
@@ -101,9 +143,16 @@ export const useCashStore = create<CashStore>((set, get) => ({
     };
 
     // Calculate initial balance (all transactions before start date)
-    const previousTransactions = state.transactions.filter(transaction => 
-      new Date(transaction.date) < new Date(startDate)
+    const previousTransactionsQ = query(
+      transactionsRef,
+      where('date', '<', startDate)
     );
+    const previousTransactionsSnapshot = await getDocs(previousTransactionsQ);
+    const previousTransactions = previousTransactionsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as CashTransaction));
+
     report.initialBalance = previousTransactions.reduce((sum, transaction) => 
       sum + (transaction.type === 'income' ? transaction.amount : -transaction.amount), 
       0
@@ -111,20 +160,17 @@ export const useCashStore = create<CashStore>((set, get) => ({
 
     // Process transactions
     filteredTransactions.forEach(transaction => {
-      // Update totals
       if (transaction.type === 'income') {
         report.totalIncome += transaction.amount;
       } else {
         report.totalExpense += transaction.amount;
       }
 
-      // Update category statistics
       if (!report.byCategory[transaction.category]) {
         report.byCategory[transaction.category] = { income: 0, expense: 0 };
       }
       report.byCategory[transaction.category][transaction.type] += transaction.amount;
 
-      // Update payment method statistics
       if (!report.byPaymentMethod[transaction.paymentMethod]) {
         report.byPaymentMethod[transaction.paymentMethod] = { income: 0, expense: 0 };
       }
