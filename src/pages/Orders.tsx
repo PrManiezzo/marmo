@@ -171,6 +171,13 @@ export default function Orders() {
     }));
   };
 
+  const handleRemoveItem = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      items: prev.items?.filter((_, i) => i !== index)
+    }));
+  };
+
   const handleAddService = () => {
     setFormData(prev => ({
       ...prev,
@@ -181,6 +188,13 @@ export default function Orders() {
         price: 0,
         observations: ''
       }]
+    }));
+  };
+
+  const handleRemoveService = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      services: prev.services?.filter((_, i) => i !== index)
     }));
   };
 
@@ -208,16 +222,13 @@ export default function Orders() {
     setFormData(prev => {
       const services = [...(prev.services || [])];
       if (field === 'serviceId') {
-        const service = services.find(s => s.id === value);
-        if (service) {
-          const selectedService = services.find(s => s.id === value);
-          services[index] = {
-            ...services[index],
-            serviceId: value,
-            serviceName: selectedService?.name || '',
-            price: selectedService?.price || 0
-          };
-        }
+        const selectedService = services.find(s => s.id === value);
+        services[index] = {
+          ...services[index],
+          serviceId: value,
+          serviceName: selectedService?.serviceName || '',
+          price: selectedService?.price || 0
+        };
       } else {
         services[index] = { ...services[index], [field]: value };
       }
@@ -486,17 +497,29 @@ export default function Orders() {
                 </Button>
               </div>
               {formData.items?.map((item, index) => (
-                <div key={index} className="grid grid-cols-3 gap-4 p-4 border rounded-lg">
-                  <Select
-                    label="Produto"
-                    value={item.productId}
-                    onChange={(e) => handleItemChange(index, 'productId', e.target.value)}
-                    options={products.map(product => ({
-                      value: product.id,
-                      label: product.name
-                    }))}
-                    required
-                  />
+                <div key={index} className="grid grid-cols-4 gap-4 p-4 border rounded-lg">
+                  <div className="col-span-4 flex justify-end">
+                    <Button
+                      type="button"
+                      variant="danger"
+                      icon={Trash2}
+                      onClick={() => handleRemoveItem(index)}
+                    >
+                      Remover
+                    </Button>
+                  </div>
+                  <div className="col-span-2">
+                    <Select
+                      label="Produto"
+                      value={item.productId}
+                      onChange={(e) => handleItemChange(index, 'productId', e.target.value)}
+                      options={products.map(product => ({
+                        value: product.id,
+                        label: product.name
+                      }))}
+                      required
+                    />
+                  </div>
                   <Input
                     label="Quantidade"
                     type="number"
@@ -523,24 +546,36 @@ export default function Orders() {
                 </Button>
               </div>
               {formData.services?.map((service, index) => (
-                <div key={index} className="grid grid-cols-3 gap-4 p-4 border rounded-lg">
-                  <Select
-                    label="Serviço"
-                    value={service.serviceId}
-                    onChange={(e) => {
-                      const selectedService = services.find(s => s.id === e.target.value);
-                      if (selectedService) {
-                        handleServiceChange(index, 'serviceId', e.target.value);
-                        handleServiceChange(index, 'serviceName', selectedService.name);
-                        handleServiceChange(index, 'price', selectedService.basePrice);
-                      }
-                    }}
-                    options={services.map(s => ({
-                      value: s.id,
-                      label: s.name
-                    }))}
-                    required
-                  />
+                <div key={index} className="grid grid-cols-4 gap-4 p-4 border rounded-lg">
+                  <div className="col-span-4 flex justify-end">
+                    <Button
+                      type="button"
+                      variant="danger"
+                      icon={Trash2}
+                      onClick={() => handleRemoveService(index)}
+                    >
+                      Remover
+                    </Button>
+                  </div>
+                  <div className="col-span-2">
+                    <Select
+                      label="Serviço"
+                      value={service.serviceId}
+                      onChange={(e) => {
+                        const selectedService = services.find(s => s.id === e.target.value);
+                        if (selectedService) {
+                          handleServiceChange(index, 'serviceId', e.target.value);
+                          handleServiceChange(index, 'serviceName', selectedService.name);
+                          handleServiceChange(index, 'price', selectedService.basePrice);
+                        }
+                      }}
+                      options={services.map(s => ({
+                        value: s.id,
+                        label: s.name
+                      }))}
+                      required
+                    />
+                  </div>
                   <Input
                     label="Quantidade"
                     type="number"
@@ -555,7 +590,7 @@ export default function Orders() {
                     onChange={(e) => handleServiceChange(index, 'price', Number(e.target.value))}
                     required
                   />
-                  <div className="col-span-3">
+                  <div className="col-span-4">
                     <TextArea
                       label="Observações"
                       value={service.observations || ''}
