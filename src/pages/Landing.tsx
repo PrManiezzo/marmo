@@ -1,218 +1,136 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Users,
-  Package,
-  ClipboardList,
-  Warehouse,
+import { 
+  Package, 
+  Users, 
+  ClipboardList, 
+  DollarSign, 
   Calculator,
-  Wrench,
-  DollarSign,
-  TrendingUp,
+  ArrowRight,
   Mail,
   Phone,
-  MessageSquare,
-  CheckCircle
+  MapPin
 } from 'lucide-react';
-
-const features = [
-  {
-    icon: Users,
-    title: 'Gestão de Clientes',
-    description: 'Cadastre e gerencie seus clientes de forma eficiente e organizada'
-  },
-  {
-    icon: Package,
-    title: 'Controle de Produtos',
-    description: 'Gerencie seu catálogo de produtos e materiais com facilidade'
-  },
-  {
-    icon: ClipboardList,
-    title: 'Pedidos',
-    description: 'Acompanhe e gerencie todos os pedidos em um só lugar'
-  },
-  {
-    icon: Warehouse,
-    title: 'Controle de Estoque',
-    description: 'Mantenha seu estoque atualizado e organizado automaticamente'
-  },
-  {
-    icon: Calculator,
-    title: 'Orçamentos',
-    description: 'Crie orçamentos profissionais de forma rápida e precisa'
-  },
-  {
-    icon: Wrench,
-    title: 'Serviços',
-    description: 'Gerencie todos os serviços oferecidos pela sua marmoraria'
-  },
-  {
-    icon: DollarSign,
-    title: 'Controle Financeiro',
-    description: 'Acompanhe entradas, saídas e relatórios financeiros'
-  },
-  {
-    icon: TrendingUp,
-    title: 'Relatórios',
-    description: 'Visualize relatórios detalhados e tome decisões baseadas em dados'
-  }
-];
-
-const benefits = [
-  {
-    icon: CheckCircle,
-    title: 'Aumente a Produtividade',
-    description: 'Automatize processos e reduza o tempo gasto com tarefas administrativas'
-  },
-  {
-    icon: CheckCircle,
-    title: 'Reduza Erros',
-    description: 'Sistema integrado que minimiza erros de cálculo e comunicação'
-  },
-  {
-    icon: CheckCircle,
-    title: 'Melhore o Atendimento',
-    description: 'Acesso rápido a informações para atender seus clientes com excelência'
-  },
-  {
-    icon: CheckCircle,
-    title: 'Controle Total',
-    description: 'Tenha controle completo sobre todas as operações do seu negócio'
-  }
-];
 
 export default function Landing() {
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-gray-900">MarmoTech</h1>
+            <Link
+              to="/login"
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+            >
+              Acessar Sistema <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-        <div className="container mx-auto px-6 py-24">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl font-bold mb-6">
-              MarmoTech: Sistema Completo para Gestão de Marmorarias
-            </h1>
+      <div className="bg-blue-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold mb-4">
+              Sistema Completo para Gestão de Marmorarias
+            </h2>
             <p className="text-xl mb-8">
-              Automatize seus processos, aumente sua produtividade e tenha controle total do seu negócio
+              Controle total do seu negócio em uma única plataforma
             </p>
-            <div className="space-x-4">
-              <Link
-                to="/login"
-                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-blue-50 transition-colors"
-              >
-                Acessar Sistema
-              </Link>
-              <a
-                href="#contact"
-                className="bg-blue-500 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-400 transition-colors"
-              >
-                Solicitar Demonstração
-              </a>
+            <Link
+              to="/login"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50"
+            >
+              Começar Agora
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Features */}
+      <div className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h3 className="text-2xl font-bold text-center mb-12">
+            Funcionalidades Principais
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <Package className="w-10 h-10 text-blue-600 mb-4" />
+              <h4 className="text-lg font-semibold mb-2">Controle de Estoque</h4>
+              <p className="text-gray-600">
+                Gerencie seu estoque de materiais com precisão e evite perdas
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <Users className="w-10 h-10 text-blue-600 mb-4" />
+              <h4 className="text-lg font-semibold mb-2">Gestão de Clientes</h4>
+              <p className="text-gray-600">
+                Cadastro completo e histórico de relacionamento com clientes
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <ClipboardList className="w-10 h-10 text-blue-600 mb-4" />
+              <h4 className="text-lg font-semibold mb-2">Pedidos e Orçamentos</h4>
+              <p className="text-gray-600">
+                Controle de pedidos e geração de orçamentos profissionais
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <Calculator className="w-10 h-10 text-blue-600 mb-4" />
+              <h4 className="text-lg font-semibold mb-2">Cálculos Automáticos</h4>
+              <p className="text-gray-600">
+                Cálculos precisos de materiais e custos para seus projetos
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <DollarSign className="w-10 h-10 text-blue-600 mb-4" />
+              <h4 className="text-lg font-semibold mb-2">Controle Financeiro</h4>
+              <p className="text-gray-600">
+                Gestão completa de entradas, saídas e relatórios financeiros
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="py-20 px-6">
-        <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Funcionalidades Completas para sua Marmoraria
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div
-                  key={index}
-                  className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                    <Icon className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Benefits Section */}
-      <div className="bg-gray-100 py-20 px-6">
-        <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Benefícios para seu Negócio
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {benefits.map((benefit, index) => {
-              const Icon = benefit.icon;
-              return (
-                <div key={index} className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <Icon className="w-6 h-6 text-green-500" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">{benefit.title}</h3>
-                    <p className="text-gray-600">{benefit.description}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* Contact Section */}
-      <div id="contact" className="py-20 px-6">
-        <div className="container mx-auto">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-12">Entre em Contato</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <a
-                href="mailto:contato@marmotech.com.br"
-                className="flex flex-col items-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow"
-              >
-                <Mail className="w-8 h-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">Email</h3>
-                <p className="text-gray-600">contato@marmotech.com.br</p>
-              </a>
-              <a
-                href="tel:+551199999999"
-                className="flex flex-col items-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow"
-              >
-                <Phone className="w-8 h-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">Telefone</h3>
-                <p className="text-gray-600">(11) 9999-9999</p>
-              </a>
-              <a
-                href="https://wa.me/5511999999999"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow"
-              >
-                <MessageSquare className="w-8 h-8 text-blue-600 mb-4" />
-                <h3 className="font-semibold mb-2">WhatsApp</h3>
+      <div className="bg-gray-100 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h3 className="text-2xl font-bold text-center mb-12">Entre em Contato</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="flex items-center justify-center">
+              <div className="text-center">
+                <Phone className="w-8 h-8 text-blue-600 mx-auto mb-4" />
+                <h4 className="font-semibold mb-2">Telefone</h4>
                 <p className="text-gray-600">(11) 99999-9999</p>
-              </a>
+              </div>
+            </div>
+            <div className="flex items-center justify-center">
+              <div className="text-center">
+                <Mail className="w-8 h-8 text-blue-600 mx-auto mb-4" />
+                <h4 className="font-semibold mb-2">Email</h4>
+                <p className="text-gray-600">contato@marmotech.com.br</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center">
+              <div className="text-center">
+                <MapPin className="w-8 h-8 text-blue-600 mx-auto mb-4" />
+                <h4 className="font-semibold mb-2">Endereço</h4>
+                <p className="text-gray-600">Rua das Pedras, 123 - São Paulo/SP</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-6">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">MarmoTech</h2>
-            <p className="text-gray-400">
-              Sistema completo para gestão de marmorarias
-            </p>
-            <div className="mt-8">
-              <p className="text-sm text-gray-400">
-                © {new Date().getFullYear()} MarmoTech. Todos os direitos reservados.
-              </p>
-            </div>
+      <footer className="bg-white border-t">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center text-gray-500">
+            <p>© 2024 MarmoTech. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
