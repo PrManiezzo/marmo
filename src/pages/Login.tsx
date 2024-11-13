@@ -20,7 +20,7 @@ export default function Login() {
     try {
       const auth = getAuth();
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/');
+      navigate('/app/dashboard');
     } catch (error: any) {
       switch (error.code) {
         case 'auth/invalid-email':
